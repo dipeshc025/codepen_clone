@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Editor from "./components/Editor";
-import axios from "axios";
+import { io } from 'socket.io-client';
+
+const socket = io('http://localhost:5000');
 
 const App = () => {
   const [html, setHtml] = useState('');
@@ -19,17 +21,18 @@ const App = () => {
       `);
     }, 250);
 
+    socket.emit('codeChange', { html, css, js });
+
     return () => clearTimeout(timeout);
   }, [html, css, js]);
 
-  const saveProject = async () => {
-    try {
-      await axios.post('/api/projects', { html, css, js });
-      alert('Project saved!');
-    } catch (error) {
-      console.error('Error saving project:', error);
-    }
-  };
+  useEffect(() => {
+    socket.on('updateCode', ({ html, css, js }) => {
+      setHtml(html);
+      setCss(css);
+      setJs(js);
+    });
+  }, []);
 
   return (
     <div className="app-container p-4">
@@ -44,16 +47,11 @@ const App = () => {
           srcDoc={srcDoc}
           title="output"
           sandbox="allow-scripts"
+          frameBorder="0"
           width="100%"
           height="400px"
         />
       </div>
-      <button
-        onClick={saveProject}
-        className="mt-4 bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Save Project
-      </button>
     </div>
   );
 };
