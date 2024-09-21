@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from "react";
-import Editor from "./components/Editor";
-import { io } from 'socket.io-client';
+import React, { useState, useEffect } from 'react';
+import Editor from './components/Editor/Editor';
 
-const socket = io('http://localhost:5000');
-
-const App = () => {
+function App() {
   const [html, setHtml] = useState('');
   const [css, setCss] = useState('');
   const [js, setJs] = useState('');
   const [srcDoc, setSrcDoc] = useState('');
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -21,39 +19,41 @@ const App = () => {
       `);
     }, 250);
 
-    socket.emit('codeChange', { html, css, js });
-
     return () => clearTimeout(timeout);
   }, [html, css, js]);
 
-  useEffect(() => {
-    socket.on('updateCode', ({ html, css, js }) => {
-      setHtml(html);
-      setCss(css);
-      setJs(js);
-    });
-  }, []);
 
   return (
-    <div className="app-container p-4">
-      <h1 className="text-2xl font-bold mb-4">CodePen Clone</h1>
-      <div className="editor-section grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Editor mode="html" code={html} onChange={setHtml} />
-        <Editor mode="css" code={css} onChange={setCss} />
-        <Editor mode="javascript" code={js} onChange={setJs} />
+    <div className="min-h-screen flex flex-col items-center p-5">
+      <h1 className="text-2xl font-bold mb-5">CodePen Clone</h1>
+
+      {/* Top Pane: Editor section with equal parts */}
+      <div className="flex w-full gap-4 mb-4">
+        <div className="flex-1">
+          <Editor language="xml" displayName="HTML" value={html} onChange={setHtml} />
+        </div>
+        <div className="flex-1">
+          <Editor language="css" displayName="CSS" value={css} onChange={setCss} />
+        </div>
+        <div className="flex-1">
+          <Editor language="javascript" displayName="JS" value={js} onChange={setJs} />
+        </div>
       </div>
-      <div className="preview-section mt-4">
+
+      {/* Bottom Pane: Output iframe */}
+      <div className="w-full h-96 mb-4">
         <iframe
           srcDoc={srcDoc}
           title="output"
           sandbox="allow-scripts"
           frameBorder="0"
-          width="100%"
-          height="400px"
+          className="w-full h-full"
         />
       </div>
+
+      
     </div>
   );
-};
+}
 
 export default App;
