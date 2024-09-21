@@ -50,12 +50,12 @@ function App() {
             setMessage('You need to be logged in to save.');
             return;
         }
-        // Add your save logic here (e.g., sending data to the backend)
+        // Implement the actual save logic here
         setMessage('Saved successfully!');
     };
 
     const toggleTheme = () => {
-        setIsDarkMode(prevMode => !prevMode);
+        setIsDarkMode(prev => !prev);
     };
 
     return (
@@ -70,7 +70,7 @@ function App() {
                 isDarkMode={isDarkMode}
             />
 
-            {/* Show Signup or Signin Form */}
+            {/* Conditional rendering for Signup or Signin Form */}
             {showSignup && <Signup onSignupSuccess={handleSignupSuccess} />}
             {showSignin && <Signin onSigninSuccess={handleSigninSuccess} />}
 

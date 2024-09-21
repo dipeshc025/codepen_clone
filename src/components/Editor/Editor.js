@@ -6,14 +6,16 @@ import 'codemirror/mode/xml/xml';
 import 'codemirror/mode/css/css';
 import 'codemirror/mode/javascript/javascript';
 
-export default function Editor({ language, displayName, value, onChange }) {
-  function handleChange(editor, data, value) {
-    onChange(value);
-  }
+const Editor = ({ language, displayName, value, onChange }) => {
+  const handleChange = (editor, data, value) => {
+    if (typeof onChange === 'function') {
+      onChange(value);
+    }
+  };
 
   return (
-    <div className="editor-container">
-      <div className="editor-title">
+    <div className="editor-container" style={{ border: '1px solid #ccc', borderRadius: '4px', marginBottom: '20px', backgroundColor: '#1F2023' }}>
+      <div className="editor-title" style={{ padding: '10px', backgroundColor: '#1F2023', borderBottom: '1px solid #ccc', color: 'white' }}>
         {displayName}
       </div>
       <CodeMirror
@@ -29,4 +31,8 @@ export default function Editor({ language, displayName, value, onChange }) {
       />
     </div>
   );
-}
+};
+
+
+
+export default Editor;
